@@ -2,9 +2,19 @@
 
 set -eu
 
-validator="$(fly5 -t cc validate-pipeline -c ci/config/pipelines/aws-prod/deploy-pipeline.yml)"
+fly --target "${CONCOURSE_TEAM}" login \
+  --concourse-url "${CONCOURSE_URL}" \
+  --team-name "${CONCOURSE_TEAM}" \
+  --username "${CONCOURSE_USERNAME}" \
+  --password "${CONCOURSE_PASSWORD}"
 
-if [[ $validator != *"looks good"* ]]; then
-    command || exit 1
-fi
 
+for file in ci/config/pipelines/aws-prod/*; do 
+
+    validator="$(fly -t ${CONCOURSE_TEAM} validate-pipeline -c ${file} )"
+
+    if [[ $validator != *"looks good"* ]]; then
+        command || exit 1
+    else echo "Passed"
+    fi
+done

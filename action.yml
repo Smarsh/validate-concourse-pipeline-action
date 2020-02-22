@@ -3,3 +3,13 @@ description: "Validate pipeline yamls"
 runs:
     using: 'docker'
     image: 'Dockerfile'
+inputs:
+  CONCOURSE_USERNAME:
+    required: true
+  CONCOURSE_PASSWORD:
+    required: true
+  CONCOURSE_TEAM:
+    description: "The team you are working with"
+    required: true
+  CONCOURSE_URL:
+    required: true
