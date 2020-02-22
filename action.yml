@@ -1,0 +1,5 @@
+name: Validate Pipeline
+description: "Validate pipeline yamls"
+runs:
+    using: 'docker'
+    image: 'Dockerfile'
