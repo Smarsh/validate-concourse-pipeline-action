@@ -14,5 +14,5 @@ RUN wget https://github.com/mikefarah/yq/releases/download/3.2.1/yq_linux_amd64 
 
 COPY entrypoint.sh /entrypoint.sh
 
-CMD ["sh", "/entrypoint.sh"]
+ENTRYPOINT [ "/entrypoint.sh" ] =
 
