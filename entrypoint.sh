@@ -31,5 +31,5 @@ while IFS= read -r line; do
     if [ ! -f "${FILE:17}" ]; then
         echo -e "$red $job_name has a file with an incorrect path:\n ----- ${FILE:17} does not exist$white"
     fi
-    ((i++))
+    (($i++))
 done < paths.yml
