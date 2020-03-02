@@ -2,18 +2,6 @@
 
 set -eu
 
-credhub login --skip-tls-validation
-
-CONCOURSE_PASSWORD="$(credhub get -q -n /concourse/${CONCOURSE_TEAM}/ci-user-password)"
-
-fly --target "${CONCOURSE_TEAM}" login \
-  --concourse-url "${CONCOURSE_URL}" \
-  --team-name "${CONCOURSE_TEAM}" \
-  --username "${CONCOURSE_USERNAME}" \
-  --password "${CONCOURSE_PASSWORD}"
-
-fly -t ${CONCOURSE_TEAM} validate-pipeline -c ${PIPELINE_CONFIG}
-
 red=$'\e[1;31m'
 white=$'\e[0m'
 
