@@ -28,8 +28,6 @@ while IFS= read -r line; do
     fi
 done < paths.yml
 
-ls -l
-
 if [ -f baddies.yml ]; then
-  exit
+  exit 1
 fi
