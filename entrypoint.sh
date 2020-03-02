@@ -24,12 +24,6 @@ while IFS= read -r line; do
     job_name="$(yq r ${PIPELINE_CONFIG} jobs[$i].name)"
     if [ ! -f "${FILE:17}" ]; then
         echo -e "$red $job_name has a file with an incorrect path:\n ----- ${FILE:17} does not exist$white"
-        echo "${FILE}" >> baddies.yml
     fi
     ((i++))
 done < paths.yml
-rm paths.yml
-
-if [ -f baddies.yml ]; then
-  exit
-fi
