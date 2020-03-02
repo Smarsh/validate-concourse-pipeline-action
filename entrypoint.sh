@@ -17,15 +17,17 @@ fly -t ${CONCOURSE_TEAM} validate-pipeline -c ${PIPELINE_CONFIG}
 red=$'\e[1;31m'
 white=$'\e[0m'
 
-ls -l
 
 set -x 
 
 yq r --printMode p "${PIPELINE_CONFIG}" jobs[*].plan[*].file >> paths.yml
+cat paths.yml
 i=0
 while IFS= read -r line; do
     FILE="$(yq r ${PIPELINE_CONFIG} $line)"
+    echo "$FILE"
     job_name="$(yq r ${PIPELINE_CONFIG} jobs[$i].name)"
+    echo "$job_name"
     if [ ! -f "${FILE:17}" ]; then
         echo -e "$red $job_name has a file with an incorrect path:\n ----- ${FILE:17} does not exist$white"
     fi
