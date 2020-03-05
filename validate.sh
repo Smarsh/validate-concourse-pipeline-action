@@ -2,19 +2,40 @@
 
 set -eu
 
+# Validates the yaml format
+yq v ${PIPELINE_CONFIG}
+
+# colors for the message
 red=$'\e[1;31m'
 white=$'\e[0m'
 
-yq r --printMode p "${PIPELINE_CONFIG}" jobs[*].plan[*].file >> paths.yml
-while IFS= read -r line; do
-    FILE="$(yq r ${PIPELINE_CONFIG} $line)"
-    job_name="$(yq r ${PIPELINE_CONFIG} ${line:0:8}.name)"
-    if [ ! -f "${FILE:17}" ]; then
-        echo -e "$red$job_name$white has a file with an incorrect path:\n ----- ${FILE:17} does not exist"
-        echo "$FILE" >> baddies.yml
-    fi
-done < paths.yml
+# Gets the value for any file key in the pipeline yaml
+yq r "${PIPELINE_CONFIG}" jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
 
-if [ -f baddies.yml ]; then
-  exit 1
-fi
+# Gets the path for every file key in the pipeline yaml
+yq r --printMode p "${PIPELINE_CONFIG}" jobs[*].plan[*].file >> paths.yml
+
+# Shortens the file_path to ci/*
+cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
+
+# Gets the job names from all jobs in the jobs.yml
+while IFS= read -r line; do
+  yq r "${PIPELINE_CONFIG}" "$line.name" >> names.yml; 
+done < jobs.yml
+
+# Combines the names.yml and file_paths.yml into one file with a "," delimiter
+paste -d ","  names.yml file_paths.yml > test.csv
+
+# Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
+while IFS="," read -r name file; do  
+    if [ ! -f "${file}" ]; then
+        echo -e "$red$name$white has a file with an incorrect path:\n ----- ${file} does not exist"
+        echo "$file" >> baddies.yml
+    fi
+done < test.csv
+
+
+# If the baddies.yml exists then it will exit with an error.\
+# if [ -f baddies.yml ]; then
+#   exit 1
+# fi
