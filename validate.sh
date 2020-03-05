@@ -36,6 +36,6 @@ done < test.csv
 
 
 # If the baddies.yml exists then it will exit with an error.\
-# if [ -f baddies.yml ]; then
-#   exit 1
-# fi
+if [ -f baddies.yml ]; then
+  exit 1
+fi
