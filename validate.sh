@@ -3,7 +3,7 @@
 set -eu
 
 # Validates the yaml format
-yq v ${PIPELINE_CONFIG}
+yq v "${PIPELINE_CONFIG}"
 
 # colors for the message
 red=$'\e[1;31m'
