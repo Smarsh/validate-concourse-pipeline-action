@@ -2,6 +2,8 @@
 
 set -eu
 
+fly validate-pipeline -c ${PIPELINE_CONFIG}
+
 # Validates the yaml format
 yq v "${PIPELINE_CONFIG}"
 
