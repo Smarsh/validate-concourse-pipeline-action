@@ -4,15 +4,6 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
 inputs:
-  CONCOURSE_USERNAME:
-    required: true
-  CONCOURSE_PASSWORD:
-    required: true
-  CONCOURSE_TEAM:
-    description: "The team you are working with"
-    required: true
-  CONCOURSE_URL:
-    required: true
   PIPELINE_CONFIG:
     description: path to pipeline config
     required: true
