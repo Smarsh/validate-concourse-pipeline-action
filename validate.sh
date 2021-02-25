@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 if [[ $HANDLEBARS ]]; then
   ./bin/generate $ENVIRONMENT_NAME
@@ -14,7 +14,7 @@ if [[ "${VAR_FILES}"  ]]; then
   done
 fi
 
-fly validate-pipeline -c "${PIPELINE_CONFIG}" "${vars_file}"
+fly validate-pipeline -c ${PIPELINE_CONFIG} $vars_file
 
 # Validates the yaml format
 yq v "${PIPELINE_CONFIG}"
