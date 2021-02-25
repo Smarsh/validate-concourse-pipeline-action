@@ -12,4 +12,4 @@ RUN npm install https://github.com/RealOrko/nodejs-handlebars-cli.git -g --force
 
 COPY validate.sh /validate.sh
 
-#CMD [ "sh", "/validate.sh" ]
+CMD [ "sh", "/validate.sh" ]
