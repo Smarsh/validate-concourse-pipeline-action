@@ -8,6 +8,7 @@ fi
 
 vars_file=''
 if [[ $VAR_FILES  ]]; then
+  echo $VAR_FILES | jq -r .[]
   files=`echo $VARS_FILES | jq -r .[]`
   for file in ${files[@]}; do
     vars_file="$vars_file -l $file"
@@ -46,7 +47,7 @@ while IFS="," read -r name file; do
       echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
       echo "$file" >> baddies.yml
     fi
-    if [[ -f "${file}" && ! -x "${file}" ]];
+    if [[ -f "${file}" && ! -x "${file}" ]]; then
       echo "$file is not executable"
       echo "$file" >> baddies.yml
     fi
