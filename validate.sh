@@ -3,7 +3,6 @@
 set -eu
 
 if [[ $HANDLEBARS ]]; then
-  npm install
   ./bin/generate $ENVIRONMENT_NAME
 fi
 
