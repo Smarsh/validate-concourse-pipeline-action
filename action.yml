@@ -13,6 +13,6 @@ inputs:
   VAR_FILE:
     description: array string of paths to var files to use
     required: false
-  ENVIRONMENT:
+  ENVIRONMENT_NAME:
     description: environment name for handlebars to generate templates for
     required: false

@@ -4,7 +4,7 @@ set -eu
 
 if [[ $HANDLEBARS ]]; then
   npm install
-  /bin/generate $ENVIRONMENT
+  /bin/generate $ENVIRONMENT_NAME
 fi
 
 vars_file=''
