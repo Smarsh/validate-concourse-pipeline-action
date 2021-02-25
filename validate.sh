@@ -7,8 +7,7 @@ if [[ $HANDLEBARS ]]; then
 fi
 
 vars_file=''
-if [[ $VAR_FILES  ]]; then
-  echo $VAR_FILES | jq -r .[]
+if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VARS_FILES | jq -r .[]`
   for file in ${files[@]}; do
     vars_file="$vars_file -l $file"
