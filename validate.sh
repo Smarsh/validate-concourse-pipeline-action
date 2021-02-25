@@ -9,7 +9,8 @@ fi
 
 vars_file=''
 if [[ $VAR_FILES  ]]; then
-  for file in ${VAR_FILES[@]}; do
+  files=`echo $VARS_FILES | jq -r .[]`
+  for file in ${files[@]}; do
     vars_file="$vars_file -l $file"
   done
 fi

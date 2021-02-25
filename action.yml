@@ -10,6 +10,9 @@ inputs:
   HANDLEBARS:
     description: boolean indicating whether this pipeline uses handlebars templates
     required: false
-  VARS_FILE:
-    description: array of paths to var files to use
+  VAR_FILE:
+    description: array string of paths to var files to use
+    required: false
+  ENVIRONMENT:
+    description: environment name for handlebars to generate templates for
     required: false
