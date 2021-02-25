@@ -9,12 +9,12 @@ fi
 vars_file=''
 if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VAR_FILES | jq -r .[]`
-  for file in ${files[@]}; do
+  for file in $files; do
     vars_file="$vars_file -l $file"
   done
 fi
 
-fly validate-pipeline -c ${PIPELINE_CONFIG} $vars_file
+fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
 
 # Validates the yaml format
 yq v "${PIPELINE_CONFIG}"
