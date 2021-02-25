@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eu
+set -e
 
 if [[ $HANDLEBARS ]]; then
   ./bin/generate $ENVIRONMENT_NAME
