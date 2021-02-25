@@ -8,13 +8,11 @@ fi
 
 vars_file=''
 if [[ "${VAR_FILES}"  ]]; then
-  files=`echo $VARS_FILES | jq -r .[]`
+  files=`echo $VAR_FILES | jq -r .[]`
   for file in ${files[@]}; do
     vars_file="$vars_file -l $file"
   done
 fi
-
-echo "${vars_file}"
 
 fly validate-pipeline -c "${PIPELINE_CONFIG}" "${vars_file}"
 
