@@ -2,7 +2,19 @@
 
 set -eu
 
-fly validate-pipeline -c ${PIPELINE_CONFIG}
+if [[ $HANDLEBARS ]]; then
+  npm install
+  /bin/generate $ENVIRONMENT
+fi
+
+vars_file=''
+if [[ $VAR_FILES  ]]; then
+  for file in ${VAR_FILES[@]}; do
+    vars_file="$vars_file -l $file"
+  done
+fi
+
+fly validate-pipeline -c ${PIPELINE_CONFIG} $vars_file
 
 # Validates the yaml format
 yq v "${PIPELINE_CONFIG}"
@@ -22,17 +34,21 @@ cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
-  yq r "${PIPELINE_CONFIG}" "$line.name" >> names.yml; 
+  yq r "${PIPELINE_CONFIG}" "$line.name" >> names.yml;
 done < jobs.yml
 
 # Combines the names.yml and file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml file_paths.yml > test.csv
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
-while IFS="," read -r name file; do  
+while IFS="," read -r name file; do
     if [ ! -f "${file}" ]; then
-        echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
-        echo "$file" >> baddies.yml
+      echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
+      echo "$file" >> baddies.yml
+    fi
+    if [[ -f "${file}" && ! -x "${file}" ]];
+      echo "$file is not executable"
+      echo "$file" >> baddies.yml
     fi
 done < test.csv
 
