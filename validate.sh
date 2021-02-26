@@ -20,7 +20,7 @@ red=$'\e[1;31m'
 white=$'\e[0m'
 yellow=$'\e[0;33m'
 
-echo -e "$yello Validating $PIPELINE_CONFIG with fly validate $white\n"
+echo -e "$yellow Validating $PIPELINE_CONFIG with fly validate $white\n"
 fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
 
 # Validates the yaml format
