@@ -46,12 +46,17 @@ while IFS="," read -r name file; do
       echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
       echo "$file" >> baddies.yml
     fi
-    if [[ -f "${file}" && ! -x "${file}" ]]; then
-      echo "$file is not executable"
-      echo "$file" >> baddies.yml
-    fi
 done < test.csv
 
+# get unique task.yml's and get the task script they are calling to check if they are executable
+perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
+while IFS= read -r file; do
+  task=`yq r $file [*].path | grep -o 'ci.*'`
+  if [[ -f ${task} && ! -x "${task}" ]]; then
+        echo -e "$red$task$white is not executable"
+        echo "$task" >> baddies.yml
+  fi
+done < unique_file_paths.yml
 
 # If the baddies.yml exists then it will exit with an error.\
 if [ -f baddies.yml ]; then
