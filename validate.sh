@@ -52,7 +52,7 @@ done < test.csv
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
 while IFS= read -r file; do
   task=`yq r $file [*].path | grep -o 'ci.*'`
-  if [[ -f ${task} && ! -x "${task}" ]]; then
+  if [[ ! -x "${task}" ]]; then
         echo -e "$red$task$white is not executable"
         echo "$task" >> baddies.yml
   fi
