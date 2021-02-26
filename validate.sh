@@ -14,14 +14,17 @@ if [[ "${VAR_FILES}"  ]]; then
   done
 fi
 
-fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
-
-# Validates the yaml format
-yq v "${PIPELINE_CONFIG}"
 
 # colors for the message
 red=$'\e[1;31m'
 white=$'\e[0m'
+yellow=$'\e[0;33m'
+
+echo -e "$yello Validating $PIPELINE_CONFIG with fly validate $white\n"
+fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
+
+# Validates the yaml format
+yq v "${PIPELINE_CONFIG}"
 
 # Gets the value for any file key in the pipeline yaml
 yq r "${PIPELINE_CONFIG}" jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
@@ -52,7 +55,7 @@ done < test.csv
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
 while IFS= read -r file; do
   task=`yq r $file [*].path | grep -o 'ci.*'`
-  if [[ ! -x "${task}" ]]; then
+  if [[ -f ${file} && ! -x "${task}" ]]; then
         echo -e "$red$task$white is not executable"
         echo "$task" >> baddies.yml
   fi
