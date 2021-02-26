@@ -26,6 +26,8 @@ fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
 # Validates the yaml format
 yq v "${PIPELINE_CONFIG}"
 
+echo -e "\n$yellow Validating task file paths\n"
+
 # Gets the value for any file key in the pipeline yaml
 yq r "${PIPELINE_CONFIG}" jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
 
@@ -51,13 +53,18 @@ while IFS="," read -r name file; do
     fi
 done < test.csv
 
+
+echo -e "\n$yellow Validating that task scripts are executable\n"
+
 # get unique task.yml's and get the task script they are calling to check if they are executable
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
 while IFS= read -r file; do
-  task=`yq r $file [*].path | grep -o 'ci.*'`
-  if [[ -f ${file} && ! -x "${task}" ]]; then
-        echo -e "$red$task$white is not executable"
-        echo "$task" >> baddies.yml
+  if [[ -f ${file} ]]; then
+    task=`yq r $file [*].path | grep -o 'ci.*'`
+    if [[ -x ${task} ]]; then
+      echo -e "$red$task$white is not executable"
+      echo "$task" >> baddies.yml
+    fi
   fi
 done < unique_file_paths.yml
 
