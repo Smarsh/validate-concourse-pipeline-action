@@ -21,25 +21,25 @@ white=$'\e[0m'
 yellow=$'\e[0;33m'
 
 echo -e "$yellow Validating $PIPELINE_CONFIG with fly validate $white\n"
-fly validate-pipeline -c ${PIPELINE_CONFIG} ${vars_file}
+fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
 
 # Validates the yaml format
-yq v "${PIPELINE_CONFIG}"
+yq v tmp.yml
 
 echo -e "\n$yellow Validating task file paths\n"
 
 # Gets the value for any file key in the pipeline yaml
-yq r "${PIPELINE_CONFIG}" jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
 
 # Gets the path for every file key in the pipeline yaml
-yq r --printMode p "${PIPELINE_CONFIG}" jobs[*].plan[*].file >> paths.yml
+yq r --printMode p tmp.yml jobs[*].plan[*].file >> paths.yml
 
 # Shortens the file_path to ci/*
 cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
-  yq r "${PIPELINE_CONFIG}" "$line.name" >> names.yml;
+  yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
 
 # Combines the names.yml and file_paths.yml into one file with a "," delimiter
