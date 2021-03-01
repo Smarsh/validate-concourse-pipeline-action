@@ -4,7 +4,6 @@ set -e
 
 cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
 for file in ${cleanup[@]}; do
-  echo "removing ${file}"
   if [[ -f $file ]]; then
     rm $file
   fi
@@ -31,7 +30,7 @@ green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
 echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
-fly6 validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
+fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
 
 # Validates the yaml format
 yq v tmp.yml
