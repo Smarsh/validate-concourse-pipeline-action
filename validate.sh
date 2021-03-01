@@ -2,8 +2,8 @@
 
 set -e
 
-cleanup=tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml
-for file in $cleanup; do
+cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
+for file in ${cleanup[@]}; do
   echo "removing ${file}"
   if [[ -f $file ]]; then
     rm $file
