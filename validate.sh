@@ -2,6 +2,13 @@
 
 set -e
 
+cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
+for file in ${cleanup[@]}; do
+  if [[ -f $file ]]; then
+    rm $file
+  fi
+done
+
 if [[ $HANDLEBARS ]]; then
   ./bin/generate $ENVIRONMENT_NAME
 fi
@@ -19,14 +26,16 @@ fi
 red=$'\e[1;31m'
 white=$'\e[0m'
 yellow=$'\e[0;33m'
+green=$'\033[0;32m'
+checkmark=$'\xE2\x9C\x94'
 
-echo -e "$yellow Validating $PIPELINE_CONFIG with fly validate $white\n"
-fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
+echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
+fly6 validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
 
 # Validates the yaml format
 yq v tmp.yml
 
-echo -e "\n$yellow Validating task file paths\n"
+echo -e "\n${yellow}Validating task file paths...$white\n"
 
 # Gets the value for any file key in the pipeline yaml
 yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
@@ -54,14 +63,17 @@ while IFS="," read -r name file; do
 done < test.csv
 
 
-echo -e "\n$yellow Validating that task scripts are executable\n"
+echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
 
 # get unique task.yml's and get the task script they are calling to check if they are executable
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
 while IFS= read -r file; do
   if [[ -f ${file} ]]; then
+    if [[ $file == $PIPELINE_CONFIG ]]; then
+      continue
+    fi
     task=`yq r $file [*].path | grep -o 'ci.*'`
-    if [[ -x ${task} ]]; then
+    if [[ ! -x ${task} ]]; then
       echo -e "$red$task$white is not executable"
       echo "$task" >> baddies.yml
     fi
@@ -69,6 +81,9 @@ while IFS= read -r file; do
 done < unique_file_paths.yml
 
 # If the baddies.yml exists then it will exit with an error.\
-if [ -f baddies.yml ]; then
+if [[ -f baddies.yml ]]; then
   exit 1
 fi
+
+echo -e "Looks good $green$checkmark$white"
+exit 0
