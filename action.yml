@@ -16,3 +16,6 @@ inputs:
   ENVIRONMENT_NAME:
     description: environment name for handlebars to generate templates for
     required: false
+  ALL_ENVS:
+    description: boolean indicating if all envs should be run
+    required: false
