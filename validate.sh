@@ -21,6 +21,8 @@ green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
 tmp_files=()
+
+
 vars_file=''
 if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VAR_FILES | jq -r .[]`
@@ -29,22 +31,22 @@ if [[ "${VAR_FILES}"  ]]; then
   done
 fi
 
-if [[ $ALL_ENVS ]]; then
-  env_array=()
-  yml_files=$(find ci/vars -type f -name '*.yml' \! -name '*template_vars*' \! -name '*common*' -exec basename {} \;)
-  for f in $yml_files
-  do
-    env_array+=("${f%.*}")
-  done
 
-  for e in "${env_array[@]}"
-  do
-    ./bin/generate "$e"
-    echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white"
-    fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> "$e"_tmp.yml
-    tmp_files+=("$e"_tmp.yml)
-  done
+if [ "$ALL_ENVS" ] && [ "$V2_PIPELINE" ]; then
+  env_files=$(find ci/vars -type f -name '*.yml' \! -name '*template_vars*' \! -name '*common*' -exec basename {} \;)
 
+  for f in $env_files
+  do
+      env_value="${f%.*}"
+
+      ./bin/generate "$env_value"
+      env_var_files=$(find ci/vars -type f -name '*.yml' \ -name "*$f*" \ -name '*common*' -exec basename {} \;)
+
+      echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white"
+      # not quite sure if this works for $env_var_files below
+      fly validate-pipeline -o -c ${PIPELINE_CONFIG} "$env_var_files"  >> "$env_value"_tmp.yml
+      tmp_files+=("$env_value"_tmp.yml)
+  done
 fi
 
 if [[ "${tmp_files[@]}" -eq 0 ]]; then
@@ -145,6 +147,7 @@ else
 
       for n in "${names[@]}"
       do
+        # not sure these nested loops will be indexed/synced correctly
         for fp in "${file_paths[@]}"
         do
           # Combines the names.yml and file_paths.yml into one file with a "," delimiter

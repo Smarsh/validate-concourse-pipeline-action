@@ -17,5 +17,8 @@ inputs:
     description: environment name for handlebars to generate templates for
     required: false
   ALL_ENVS:
-    description: boolean indicating if all envs should be run
+    description: boolean indicating if all envs should be run with V2 pipelines
+    required: false
+  V2_PIPELINE:
+    description: boolean indicating this uses the V2 pipeline convention structure for files/directories
     required: false
