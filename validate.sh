@@ -2,15 +2,14 @@
 
 set -e
 
-cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
-for file in ${cleanup[@]}; do
-  if [[ -f $file ]]; then
-    rm $file
-  fi
-done
+if [[ $MULTI_REPO == true ]]; then
+  bin_path="${PIPELINE_REPOSITORY}/bin"
+else
+  bin_path="./bin"
+fi
 
-if [[ $HANDLEBARS ]]; then
-  ./bin/generate $ENVIRONMENT_NAME
+if [[ $HANDLEBARS == true ]]; then
+  echo "${bin_path}/generate" $ENVIRONMENT_NAME
 fi
 
 vars_file=''
@@ -29,8 +28,8 @@ yellow=$'\e[0;33m'
 green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
-echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
-fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
+echo -e "${yellow}Validating ${PIPELINE_REPOSITORY}/$PIPELINE_CONFIG with fly validate...$white\n"
+fly validate-pipeline -o -c "${PIPELINE_REPOSITORY}/${PIPELINE_CONFIG}" ${vars_file} >> tmp.yml
 
 # Validates the yaml format
 yq v tmp.yml
