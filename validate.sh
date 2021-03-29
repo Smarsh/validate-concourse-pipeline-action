@@ -28,8 +28,8 @@ yellow=$'\e[0;33m'
 green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
-echo -e "${yellow}Validating ${PIPELINE_REPOSITORY}/$PIPELINE_CONFIG with fly validate...$white\n"
-fly validate-pipeline -o -c "${PIPELINE_REPOSITORY}/${PIPELINE_CONFIG}" ${vars_file} >> tmp.yml
+echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
+fly validate-pipeline -o -c "${PIPELINE_CONFIG}" ${vars_file} >> tmp.yml
 
 # Validates the yaml format
 yq v tmp.yml
