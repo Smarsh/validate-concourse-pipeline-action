@@ -3,13 +3,12 @@
 set -e
 
 if [[ $MULTI_REPO == true ]]; then
-  bin_path="./${PIPELINE_REPOSITORY}/bin"
-else
-  bin_path="./bin"
+  pushd $PIPELINE_REPOSITORY
 fi
 
 if [[ $HANDLEBARS == true ]]; then
-  echo "${bin_path}/generate" $ENVIRONMENT_NAME
+  ./bin/generate $ENVIRONMENT_NAME
+  pushd $GITHUB_WORKSPACE
 fi
 
 vars_file=''
