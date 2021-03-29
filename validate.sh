@@ -83,7 +83,7 @@ while IFS= read -r file; do
     else
       task=`yq r $file [*].path | grep -o 'ci.*'`
     fi
-    if [[ ! -x ${task} ]]; then
+    if ([[ -f ${task} ]] && [[ ! -x ${task} ]]); then
       echo -e "$red$task$white is not executable"
       echo "$task" >> baddies.yml
     fi
