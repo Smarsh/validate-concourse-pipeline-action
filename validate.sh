@@ -72,7 +72,11 @@ while IFS= read -r file; do
     if [[ $file == $PIPELINE_CONFIG ]]; then
       continue
     fi
-    task=`yq r $file [*].path | grep -o 'ci.*'`
+    if [[ ${MULT_REPO} ]]; then # if MULTI_REPO is true it will take the whole path of the task and expects to have the directories in the container
+      task=`yq r $file [*].path`
+    else
+      task=`yq r $file [*].path | grep -o 'ci.*'`
+    fi
     if [[ ! -x ${task} ]]; then
       echo -e "$red$task$white is not executable"
       echo "$task" >> baddies.yml

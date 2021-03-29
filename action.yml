@@ -16,3 +16,6 @@ inputs:
   ENVIRONMENT_NAME:
     description: environment name for handlebars to generate templates for
     required: false
+  MULTI_REPO:
+    description: boolean incicating whether the pipeline tasks are from multiple repositories
+    required: false
