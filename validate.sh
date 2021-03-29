@@ -16,7 +16,7 @@ vars_file=''
 if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VAR_FILES | jq -r .[]`
   for file in $files; do
-    vars_file="$vars_file -l $file"
+    vars_file="$vars_file -l ${PIPELINE_REPOSITORY}/$file"
   done
 fi
 
