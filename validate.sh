@@ -3,7 +3,7 @@
 set -e
 
 if [[ $MULTI_REPO == true ]]; then
-  bin_path="${PIPELINE_REPOSITORY}/bin"
+  bin_path="./${PIPELINE_REPOSITORY}/bin"
 else
   bin_path="./bin"
 fi
