@@ -38,9 +38,9 @@ echo -e "\n${yellow}Validating task file paths...$white\n"
 # Shortens the file_path to ci/* or keeps whole path
 
 if [[ $MULTI_REPO == true ]]; then
-  yq r ../delivery-aws-pipelines/ci/deploy_enterprise_archive.yml jobs[*].plan[*].file >> file_paths.yml
+  yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
 else
-  yq r ../delivery-aws-pipelines/ci/deploy_enterprise_archive.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+  yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
 fi
 
 # get unique task.yml's
