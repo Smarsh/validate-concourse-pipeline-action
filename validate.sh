@@ -35,13 +35,22 @@ yq v tmp.yml
 
 echo -e "\n${yellow}Validating task file paths...$white\n"
 
-# Gets the value for any file key in the pipeline yaml
-yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+# Shortens the file_path to ci/* or keeps whole path
+
+if [[ $MULTI_REPO == true ]]; then
+  yq r ../delivery-aws-pipelines/ci/deploy_enterprise_archive.yml jobs[*].plan[*].file >> file_paths.yml
+else
+  yq r ../delivery-aws-pipelines/ci/deploy_enterprise_archive.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+fi
+
+# get unique task.yml's
+perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
+
 
 # Gets the path for every file key in the pipeline yaml
 yq r --printMode p tmp.yml jobs[*].plan[*].file >> paths.yml
 
-# Shortens the file_path to ci/*
+# Gets the value for any file key in the pipeline yaml
 cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
@@ -49,8 +58,8 @@ while IFS= read -r line; do
   yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
 
-# Combines the names.yml and file_paths.yml into one file with a "," delimiter
-paste -d ","  names.yml file_paths.yml > test.csv
+# Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
+paste -d ","  names.yml unique_file_paths.yml > test.csv
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
@@ -63,14 +72,13 @@ done < test.csv
 
 echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
 
-# get unique task.yml's and get the task script they are calling to check if they are executable
-perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
+# use unique_file_paths to get the task script they are calling to check if they are executable
 while IFS= read -r file; do
   if [[ -f ${file} ]]; then
     if [[ $file == $PIPELINE_CONFIG ]]; then
       continue
     fi
-    if [[ ${MULT_REPO} ]]; then # if MULTI_REPO is true it will take the whole path of the task and expects to have the directories in the container
+    if [[ ${MULT_REPO} == true ]]; then # if MULTI_REPO is true it will take the whole path of the task and expects to have the directories in the container
       task=`yq r $file [*].path`
     else
       task=`yq r $file [*].path | grep -o 'ci.*'`
