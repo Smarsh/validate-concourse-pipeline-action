@@ -2,6 +2,13 @@
 
 set -e
 
+cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
+for file in ${cleanup[@]}; do
+  if [[ -f $file ]]; then
+    rm $file
+  fi
+done
+
 if [[ $MULTI_REPO == true ]]; then
   pushd $PIPELINE_REPOSITORY
 fi
