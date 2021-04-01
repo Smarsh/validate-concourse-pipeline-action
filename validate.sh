@@ -13,6 +13,12 @@ if [[ $MULTI_REPO == true ]]; then
   pushd $PIPELINE_REPOSITORY
 fi
 
+if [[ $PIPELINE_REPOSITORY ]]; then
+  pipeline_path="${PIPELINE_REPOSITORY}/"
+else
+  pipeline_path=""
+fi
+
 if [[ $HANDLEBARS == true ]]; then
   ./bin/generate $ENVIRONMENT_NAME
   pushd $GITHUB_WORKSPACE
@@ -22,7 +28,7 @@ vars_file=''
 if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VAR_FILES | jq -r .[]`
   for file in $files; do
-    vars_file="$vars_file -l ${PIPELINE_REPOSITORY}/$file"
+    vars_file="$vars_file -l ${pipeline_path}/$file"
   done
 fi
 
@@ -35,8 +41,8 @@ green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
 echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
-echo $PIPELINE_REPOSITORY
-fly validate-pipeline -o -c "${PIPELINE_REPOSITORY}/${PIPELINE_CONFIG}" ${vars_file} >> tmp.yml
+
+fly validate-pipeline -o -c "${pipeline_path}/${PIPELINE_CONFIG}" "${vars_file}" >> tmp.yml
 
 # Validates the yaml format
 yq v tmp.yml
