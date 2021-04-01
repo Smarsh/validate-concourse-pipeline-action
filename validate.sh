@@ -30,6 +30,7 @@ green=$'\033[0;32m'
 checkmark=$'\xE2\x9C\x94'
 
 echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
+echo ${PIPELINE_CONFIG}
 fly validate-pipeline -o -c ${PIPELINE_CONFIG} ${vars_file} >> tmp.yml
 
 # Validates the yaml format
