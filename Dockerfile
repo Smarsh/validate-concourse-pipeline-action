@@ -8,6 +8,10 @@ RUN wget https://github.com/concourse/concourse/releases/download/v7.2.0/fly-7.2
     tar xf fly*.tgz -C /usr/bin/ && \
     chmod +x /usr/bin/fly
 
+RUN wget https://github.com/cuelang/cue/releases/download/v0.4.0-alpha.2/cue_v0.4.0-alpha.2_linux_amd64.tar.gz && \
+    tar xf cue*.tar.gz -C /usr/bin/ && \
+    chmod +x /usr/bin/cue
+
 RUN npm install https://github.com/RealOrko/nodejs-handlebars-cli.git -g --force
 
 COPY validate.sh /validate.sh
