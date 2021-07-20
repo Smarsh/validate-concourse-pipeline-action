@@ -56,24 +56,36 @@ if [[ $MULTI_REPO == true ]]; then
 else
   yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
 fi
+echo "file_paths.yml"
+cat file_paths.yml
 
 # get unique task.yml's
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
+echo "unique_file_paths.yml"
+cat unique_file_paths.yml
 
 
 # Gets the path for every file key in the pipeline yaml
 yq r --printMode p tmp.yml jobs[*].plan[*].file >> paths.yml
+echo "paths.yml"
+cat paths.yml
 
 # Gets the value for any file key in the pipeline yaml
 cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
+echo "jobs.yml"
+cat jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
   yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
+echo "jobs.yml again"
+cat jobs.yml
 
 # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml unique_file_paths.yml > test.csv
+echo "test.csv"
+cat test.csv
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
