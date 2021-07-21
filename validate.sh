@@ -97,6 +97,12 @@ while IFS="," read -r name file; do
     fi
 done < test.csv
 
+echo "test.csv"
+cat test.csv
+
+echo "baddies.yml"
+cat baddies.yml
+
 
 echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
 
