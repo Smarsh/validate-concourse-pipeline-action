@@ -114,7 +114,8 @@ while IFS= read -r file; do
     if [[ ${MULTI_REPO} == true ]]; then # if MULTI_REPO is true it will take the whole path of the task and expects to have the directories in the container
       task=`yq r $file [*].path`
     else
-      task=`yq r $file [*].path | grep -o 'ci.*'`
+      # task=`yq r $file [*].path | grep -o 'ci.*'`
+      task=`yq r $file [*].path`
     fi
     if ([[ -f ${task} ]] && [[ ! -x ${task} ]]); then
       echo -e "$red$task$white is not executable"
