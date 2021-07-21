@@ -100,8 +100,7 @@ done < test.csv
 echo "test.csv"
 cat test.csv
 
-echo "baddies.yml"
-cat baddies.yml
+
 
 
 echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
@@ -126,6 +125,8 @@ done < unique_file_paths.yml
 
 # If the baddies.yml exists then it will exit with an error.\
 if [[ -f baddies.yml ]]; then
+  echo "echoing baddies.yml"
+  cat baddies.yml
   exit 1
 fi
 
