@@ -86,6 +86,7 @@ cat jobs.yml
 paste -d ","  names.yml unique_file_paths.yml > test.csv
 echo "test.csv"
 cat test.csv
+pwd
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
