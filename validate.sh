@@ -54,7 +54,8 @@ echo -e "\n${yellow}Validating task file paths...$white\n"
 if [[ $MULTI_REPO == true ]]; then
   yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
 else
-  yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+  # yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
+  yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
 fi
 echo "file_paths.yml"
 cat file_paths.yml
