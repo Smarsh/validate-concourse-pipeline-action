@@ -49,13 +49,7 @@ yq v tmp.yml
 
 echo -e "\n${yellow}Validating task file paths...$white\n"
 
-# Shortens the file_path to ci/* or keeps whole path
-
-if [[ $MULTI_REPO == true ]]; then
-  yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
-else
-  yq r tmp.yml jobs[*].plan[*].file | grep -o 'ci.*' >> file_paths.yml
-fi
+yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
 
 # get unique task.yml's
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
@@ -92,11 +86,7 @@ while IFS= read -r file; do
     if [[ $file == $PIPELINE_CONFIG ]]; then
       continue
     fi
-    if [[ ${MULTI_REPO} == true ]]; then # if MULTI_REPO is true it will take the whole path of the task and expects to have the directories in the container
-      task=`yq r $file [*].path`
-    else
-      task=`yq r $file [*].path | grep -o 'ci.*'`
-    fi
+    task=`yq r $file [*].path`
     if ([[ -f ${task} ]] && [[ ! -x ${task} ]]); then
       echo -e "$red$task$white is not executable"
       echo "$task" >> baddies.yml
@@ -106,6 +96,8 @@ done < unique_file_paths.yml
 
 # If the baddies.yml exists then it will exit with an error.\
 if [[ -f baddies.yml ]]; then
+  echo "echoing baddies.yml"
+  cat baddies.yml
   exit 1
 fi
 
