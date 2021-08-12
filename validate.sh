@@ -29,6 +29,11 @@ if [[ "${VAR_FILES}"  ]]; then
   files=`echo $VAR_FILES | jq -r .[]`
   for file in $files; do
     vars_file="$vars_file -l ${pipeline_path}/$file"
+
+    cuefile=$file.cue
+    if [[ -f "$cuefile" ]]; then
+      cue vet $cuefile $file
+    fi
   done
 fi
 
