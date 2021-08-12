@@ -30,10 +30,10 @@ if [[ "${VAR_FILES}"  ]]; then
   for file in $files; do
     vars_file="$vars_file -l ${pipeline_path}/$file"
 
-    cuefile="$pipeline_path/$file.cue"
+    cuefile="$pipeline_path$file.cue"
     if [[ -f "$cuefile" ]]; then
-      echo "cue vet $cuefile $pipeline_path/$file"
-      cue vet $cuefile $pipeline_path/$file
+      echo "cue vet $cuefile $pipeline_path$file"
+      cue vet $cuefile $pipeline_path$file
     else
       echo "cue file not found: $cuefile"
     fi
