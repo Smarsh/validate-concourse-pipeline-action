@@ -32,6 +32,7 @@ if [[ "${VAR_FILES}"  ]]; then
 
     cuefile=$file.cue
     if [[ -f "$cuefile" ]]; then
+      echo "cue vet $cuefile $file"
       cue vet $cuefile $file
     fi
   done
