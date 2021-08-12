@@ -35,7 +35,7 @@ if [[ "${VAR_FILES}"  ]]; then
       echo "cue vet $cuefile $file"
       cue vet $cuefile $file
     else
-      echo cue file not found: "$cuefile"
+      echo "cue file not found: $cuefile"
     fi
   done
 fi
