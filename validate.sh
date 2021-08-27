@@ -79,7 +79,7 @@ paste -d ","  names.yml unique_file_paths.yml > test.csv
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
-    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]]; then
+    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != "versions-ui_portal_app/.ref" ]]; then
       echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
       echo "$file" >> baddies.yml
     fi
