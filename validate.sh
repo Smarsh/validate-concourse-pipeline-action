@@ -75,6 +75,9 @@ while IFS= read -r line; do
   yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
 
+# Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
+paste -d ","  names.yml unique_file_paths.yml > test.csv
+
 echo "Paths file:"
 cat paths.yml
 echo "Jobs file:"
@@ -83,9 +86,12 @@ echo "Names file:"
 cat names.yml
 echo "Temp file:"
 cat tmp.yml
-
-# Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
-paste -d ","  names.yml unique_file_paths.yml > test.csv
+echo "File paths file:"
+cat file_paths.yml
+echo "Unique file paths file:"
+cat unique_file_paths.yml
+echo "Test CSV file:"
+cat test.csv
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the 
 # file_path, and will put and non existing file in the baddies.yml
