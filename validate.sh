@@ -3,7 +3,7 @@
 set -e 
 set -xx
 
-cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
+cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml comments.yml)
 for file in ${cleanup[@]}; do
   if [[ -f $file ]]; then
     rm $file
@@ -59,6 +59,7 @@ yq v tmp.yml
 echo -e "\n${yellow}Validating task file paths...$white\n"
 
 yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
+yq eval 'lineComment' tmp.yml jobs[*].plan[*].file >> comments.yml
 
 # get unique task.yml's
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
@@ -92,6 +93,8 @@ echo "Unique file paths file:"
 cat unique_file_paths.yml
 echo "Test CSV file:"
 cat test.csv
+echo "Comments file:"
+cat comments.yml
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the 
 # file_path, and will put and non existing file in the baddies.yml
