@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+set -e 
+set -xx
 
 cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
 for file in ${cleanup[@]}; do
@@ -70,6 +71,7 @@ cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
+  echo "Line is this: $line"
   yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
 
@@ -79,6 +81,8 @@ echo "Jobs file:"
 cat jobs.yml
 echo "Names file:"
 cat names.yml
+echo "Temp file:"
+cat tmp.yml
 
 # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml unique_file_paths.yml > test.csv
