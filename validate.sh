@@ -1,9 +1,8 @@
 #!/bin/bash
 
-set -e 
-set -xx
+set -e
 
-cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml comments.yml)
+cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
 for file in ${cleanup[@]}; do
   if [[ -f $file ]]; then
     rm $file
@@ -59,7 +58,6 @@ yq v tmp.yml
 echo -e "\n${yellow}Validating task file paths...$white\n"
 
 yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
-yq eval 'lineComment' tmp.yml jobs[*].plan[*].file >> comments.yml
 
 # get unique task.yml's
 perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
@@ -72,34 +70,16 @@ cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
-  echo "Line is this: $line"
   yq r tmp.yml "$line.name" >> names.yml;
 done < jobs.yml
 
 # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml unique_file_paths.yml > test.csv
 
-echo "Paths file:"
-cat paths.yml
-echo "Jobs file:"
-cat jobs.yml
-echo "Names file:"
-cat names.yml
-echo "Temp file:"
-cat tmp.yml
-echo "File paths file:"
-cat file_paths.yml
-echo "Unique file paths file:"
-cat unique_file_paths.yml
-echo "Test CSV file:"
-cat test.csv
-echo "Comments file:"
-cat comments.yml
-
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the 
 # file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
-    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != versions-ui_portal_* ]] && [[ ${file} != "parsed-version/version.yml" ]] && [[ ! (${file} =~ event-logging-git/*) ]]  && [[ ! (${file} =~ insights-jobs-app-git/*) ]]  && [[ ! (${file} =~ ea-policy-evaluation-service-git/*) ]]  && [[ ! (${file} =~ ea-ediscovery-api-git/*) ]]  && [[ ${file} != versions-*/.ref ]] && [[ ${file} != *app*/version ]] && [[ ${file} != artifact-version/version ]] && [[ ${file} != ipList/ipList.txt ]] && [[ ${file} != platform-automation-tasks/tasks/credhub-interpolate.yml ]]; then
+    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != versions-ui_portal_* ]] && [[ ! (${file} =~ event-logging-git/*) ]]  && [[ ! (${file} =~ insights-jobs-app-git/*) ]]  && [[ ! (${file} =~ ea-policy-evaluation-service-git/*) ]]  && [[ ! (${file} =~ ea-ediscovery-api-git/*) ]]  && [[ ${file} != versions-*/.ref ]] && [[ ${file} != */version ]] && [[ ${file} != ipList/ipList.txt ]] && [[ ${file} != platform-automation-tasks/tasks/credhub-interpolate.yml ]]; then
       echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
       echo "$file" >> baddies.yml
     fi
