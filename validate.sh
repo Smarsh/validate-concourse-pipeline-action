@@ -25,10 +25,10 @@ if [[ $HANDLEBARS == true ]]; then
 fi
 
 vars_file=''
-if [[ "${VAR_FILES}"  ]]; then
-  files=`echo $VAR_FILES | jq -r .[]`
-  for file in $files; do
-    vars_file="$vars_file -l ${pipeline_path}/$file"
+if [[ "${VAR_EXTS}"  ]]; then
+  extentsions=`echo $VAR_EXTS | jq -r .[]`
+  for extension in $extentsions; do
+    vars_file="$vars_file -l ${pipeline_path}/ci/vars/$ENVIRONMENT_NAME$extension"
 
     cuefile="$pipeline_path$file.cue"
     if [[ -f "$cuefile" ]]; then
@@ -76,7 +76,7 @@ done < jobs.yml
 # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml unique_file_paths.yml > test.csv
 
-# Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the 
+# Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the
 # file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
     if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != versions-ui_portal_* ]] && [[ ! (${file} =~ event-logging-git/*) ]]  && [[ ! (${file} =~ insights-jobs-app-git/*) ]]  && [[ ! (${file} =~ git-properties-*/*) ]] && [[ ! (${file} =~ ea-policy-evaluation-service-git/*) ]]  && [[ ! (${file} =~ ea-ediscovery-api-git/*) ]]  && [[ ${file} != versions-*/.ref ]] && [[ ${file} != */version ]] && [[ ${file} != ipList/ipList.txt ]] && [[ ${file} != platform-automation-tasks/tasks/credhub-interpolate.yml ]]; then
