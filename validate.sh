@@ -29,6 +29,7 @@ if [[ "${VAR_EXTS}"  ]]; then
   extentsions=`echo $VAR_EXTS | jq -r .[]`
   for extension in $extentsions; do
     file_path="${pipeline_path}/ci/vars/$ENVIRONMENT_NAME$extension"
+    echo "file path is : $file_path"
     vars_file="$vars_file -l $file_path"
 
     cuefile="$file_path.cue"
