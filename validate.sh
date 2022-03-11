@@ -121,5 +121,6 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
       pushd $GITHUB_WORKSPACE
     fi
   pwd
+  echo "starting checks for environment $ENVIRONMENT_NAME"
   checkenv
 done
