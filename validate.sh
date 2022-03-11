@@ -110,7 +110,7 @@ checkenv(){
     fi
 
     echo -e "$ENVIRONMENT_NAME Looks good $green$checkmark$white"
-    exit 0
+    # exit 0
 }
 
 for ENVIRONMENT_NAME in $ENV_LIST; do
