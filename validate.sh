@@ -113,8 +113,7 @@ checkenv(){
     # exit 0
 }
 
-ENVIRONMENT_LIST=`echo $ENV_LIST | jq -r .[]`
-for ENVIRONMENT_NAME in $ENVIRONMENT_LIST; do
+for ENVIRONMENT_NAME in $ENV_LIST; do
     if [[ $HANDLEBARS == true ]]; then
       ./bin/generate $ENVIRONMENT_NAME
       pushd $GITHUB_WORKSPACE
@@ -122,4 +121,5 @@ for ENVIRONMENT_NAME in $ENVIRONMENT_LIST; do
   pwd
   echo "starting checks for environment $ENVIRONMENT_NAME"
   checkenv
+  pushd $PIPELINE_REPOSITORY
 done
