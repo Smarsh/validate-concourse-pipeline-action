@@ -120,6 +120,20 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
     fi
   pwd
   echo "starting checks for environment $ENVIRONMENT_NAME"
-  checkenv
+  checkenv &
   pushd $PIPELINE_REPOSITORY
 done
+
+FAIL=0
+for job in `jobs -p`
+do
+    echo $job
+    wait $job || let "FAIL+=1"
+done
+if [ "$FAIL" == "0" ];
+then
+    echo "All the environment checks are successful!!!"
+else
+    echo "One or mor environment check is failing!!!"
+    exit 1
+fi
