@@ -39,6 +39,6 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
       pushd $GITHUB_WORKSPACE
     fi
   pwd
-  ls -al
+  ls -al ~/
   ./checkenv.sh
 done
