@@ -15,5 +15,6 @@ RUN wget https://github.com/cuelang/cue/releases/download/v0.4.0/cue_v0.4.0_linu
 RUN npm install https://github.com/RealOrko/nodejs-handlebars-cli.git -g --force
 
 COPY validate.sh /validate.sh
+COPY checkenv.sh /checkenv.sh
 
 CMD [ "bash", "/validate.sh" ]

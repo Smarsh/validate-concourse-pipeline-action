@@ -2,6 +2,8 @@
 
 set -e
 
+ls -al
+
 cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
 for file in ${cleanup[@]}; do
   if [[ -f $file ]]; then
@@ -36,6 +38,7 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
       ./bin/generate $ENVIRONMENT_NAME
       pushd $GITHUB_WORKSPACE
     fi
-
+  pwd
+  ls -al
   ./checkenv.sh
 done
