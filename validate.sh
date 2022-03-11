@@ -113,8 +113,9 @@ checkenv(){
     # exit 0
 }
 
-for ENVIRONMENT_NAME in $ENV_LIST; do
+echo $ENV_LIST
 
+for ENVIRONMENT_NAME in $ENV_LIST; do
     if [[ $HANDLEBARS == true ]]; then
       ./bin/generate $ENVIRONMENT_NAME
       pushd $GITHUB_WORKSPACE
