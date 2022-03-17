@@ -26,9 +26,10 @@ export white=$'\e[0m'
 export yellow=$'\e[0;33m'
 export green=$'\033[0;32m'
 export checkmark=$'\xE2\x9C\x94'
+export crossmark=$'\xE2\x9D\x8C'
 
 if [[ -z  $ENV_LIST ]]; then
-  echo "list of environments has to be given $red$checkmark$white"
+  echo "list of environments has to be given $red$crossmark$white"
 fi
 
 checkenv(){
@@ -107,12 +108,12 @@ checkenv(){
     # If the baddies.yml exists then it will exit with an error.\
     if [[ -f baddies.yml ]]; then
       echo "echoing baddies.yml"
+      echo -e "$ENVIRONMENT_NAME Failed with error $red$crossmark$white"
       cat baddies.yml
       exit 1
     fi
 
     echo -e "$ENVIRONMENT_NAME Looks good $green$checkmark$white"
-    # exit 0
 }
 
 for ENVIRONMENT_NAME in $ENV_LIST; do
@@ -135,8 +136,8 @@ do
 done
 if [ "$FAIL" == "0" ];
 then
-    echo "All the environment checks are successful!!!"
+    echo -e "All the environment checks are successful!!! $green$checkmark$white"
 else
-    echo "One or mor environment check is failing!!!"
+    echo -e "One or mor environment check is failing!!! $red$crossmark$white"
     exit 1
 fi
