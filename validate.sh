@@ -123,7 +123,7 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
 done
 echo " entering into github workspace"
 pushd $GITHUB_WORKSPACE
-for ENVIRONMENT_NAME in $ENV_LIST; do
+for ENVIRONMENT_NAME in ${ENV_LIST[@]:0:3}; do
   echo "starting checks for environment $ENVIRONMENT_NAME"
   checkenv &
 done
