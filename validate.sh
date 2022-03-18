@@ -20,8 +20,8 @@ else
 fi
 
 if [[ $HANDLEBARS == true ]]; then
-  if [[ -f bin/action_generate ]]; then
-    cp bin/action_generate bin/generate
+  if [[ -f bin/action-generate ]]; then
+    cp bin/action-generate bin/generate
   fi
   ./bin/generate $ENVIRONMENT_NAME
   pushd $GITHUB_WORKSPACE
