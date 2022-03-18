@@ -139,6 +139,10 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
     pushd $PIPELINE_REPOSITORY
 done
 
+pushd $GITHUB_WORKSPACE
+
+ls -al result_dir
+
 for filename in result_dir/*.yml; do
     validate_tasks "$ENVIRONMENT_NAME" "$filename" &
 done
