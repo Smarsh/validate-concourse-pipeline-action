@@ -69,7 +69,9 @@ checkenv(){
 validate_tasks(){
   pushd $GITHUB_WORKSPACE
     # Validates the yaml format
-    yq v result_dir/$2
+    pushd result_dir
+    yq v $2
+    popd
 
     echo -e "\n${yellow}Validating task file paths...$white\n"
 
