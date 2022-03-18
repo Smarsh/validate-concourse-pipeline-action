@@ -2,12 +2,19 @@
 
 set -e
 
-cleanup=(tmp.yml file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
-for file in ${cleanup[@]}; do
-  if [[ -f $file ]]; then
-    rm $file
+# cleanup=(file_paths.yml unique_file_paths.yml names.yml test.csv baddies.yml jobs.yml paths.yml)
+# for file in ${cleanup[@]}; do
+#   if [[ -f $file ]]; then
+#     rm $file
+#   fi
+# done
+
+  if [[ -d result_dir ]]; then
+    rm -r result_dir
   fi
-done
+
+#creating the result directory
+mkdir result_dir
 
 if [[ $MULTI_REPO == true ]]; then
   echo " entering into pipeline repo"
@@ -19,6 +26,7 @@ if [[ $PIPELINE_REPOSITORY ]]; then
 else
   pipeline_path=""
 fi
+
 
 # colors for the message
 export red=$'\e[1;31m'
@@ -39,7 +47,7 @@ checkenv(){
   if [[ "${VAR_EXTS}"  ]]; then
     extentsions=`echo $VAR_EXTS | jq -r .[]`
     for extension in $extentsions; do
-      file_path="${pipeline_path}/ci/vars/$ENVIRONMENT_NAME$extension"
+      file_path="${pipeline_path}/ci/vars/$1$extension"
       echo "file path is : $file_path"
       vars_file="$vars_file -l $file_path"
 
@@ -55,35 +63,34 @@ checkenv(){
 
     echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
 
-    fly validate-pipeline -o -c "${pipeline_path}/${PIPELINE_CONFIG}" "${vars_file}" >> tmp.yml
+    fly validate-pipeline -o -c "${pipeline_path}/${PIPELINE_CONFIG}" "${vars_file}" >> result_dir/$1.yml
+}
 
-    echo " --------------------------------------------------------------------"
-    cat tmp.yml
-    echo " --------------------------------------------------------------------"
-
+validate_tasks(){
+  pushd $GITHUB_WORKSPACE
     # Validates the yaml format
-    yq v tmp.yml
+    yq v result_dir/$2
 
     echo -e "\n${yellow}Validating task file paths...$white\n"
 
-    yq r tmp.yml jobs[*].plan[*].file >> file_paths.yml
+    yq r $2 jobs[*].plan[*].file >> result_dir/$1_file_paths.yml
 
     # get unique task.yml's
-    perl -ne 'print if ! $a{$_}++' file_paths.yml >> unique_file_paths.yml
+    perl -ne 'print if ! $a{$_}++' result_dir/$1_file_paths.yml >> result_dir/$1_unique_file_paths.yml
 
     # Gets the path for every file key in the pipeline yaml
-    yq r --printMode p tmp.yml jobs[*].plan[*].file >> paths.yml
+    yq r --printMode p $2 jobs[*].plan[*].file >> result_dir/$1_paths.yml
 
     # Gets the value for any file key in the pipeline yaml
-    cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
+    cat result_dir/$1_paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> result_dir/$1_jobs.yml
 
     # Gets the job names from all jobs in the jobs.yml
     while IFS= read -r line; do
-      yq r tmp.yml "$line.name" >> names.yml;
-    done < jobs.yml
+      yq r $2 "$line.name" >> result_dir/$1_names.yml;
+    done < result_dir/$1_jobs.yml
 
     # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
-    paste -d ","  names.yml unique_file_paths.yml > test.csv
+    paste -d ","  result_dir/$1_names.yml result_dir/$1_unique_file_paths.yml > result_dir/$1_test.csv
 
 
     # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the
@@ -93,7 +100,7 @@ checkenv(){
           echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
           echo "$file" >> baddies.yml
         fi
-    done < test.csv
+    done < result_dir/$1_test.csv
 
     echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
 
@@ -109,25 +116,30 @@ checkenv(){
           echo "$task" >> baddies.yml
         fi
       fi
-    done < unique_file_paths.yml
+    done < result_dir/$1_unique_file_paths.yml
 
     # If the baddies.yml exists then it will exit with an error.\
     if [[ -f baddies.yml ]]; then
       echo "echoing baddies.yml"
-      echo -e "$ENVIRONMENT_NAME Failed with error $red$crossmark$white"
+      echo -e "$1 Failed with error $red$crossmark$white"
       cat baddies.yml
       exit 1
     fi
 
-    echo -e "$ENVIRONMENT_NAME Looks good $green$checkmark$white"
+    echo -e "$1 Looks good $green$checkmark$white"
 }
 
 for ENVIRONMENT_NAME in $ENV_LIST; do
     if [[ $HANDLEBARS == true ]]; then
       ./bin/generate $ENVIRONMENT_NAME
     fi
-    checkenv &
+    checkenv "$ENVIRONMENT_NAME"
 done
+
+for filename in result_dir/*.yml; do
+    validate_tasks "$filename"
+done
+
 # echo " entering into github workspace"
 # pushd $GITHUB_WORKSPACE
 # ENV_ARR=($ENV_LIST)
