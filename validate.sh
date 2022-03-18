@@ -33,7 +33,9 @@ if [[ -z  $ENV_LIST ]]; then
 fi
 
 checkenv(){
-    vars_file=''
+  echo " entering into github workspace"
+  pushd $GITHUB_WORKSPACE
+  vars_file=''
   if [[ "${VAR_EXTS}"  ]]; then
     extentsions=`echo $VAR_EXTS | jq -r .[]`
     for extension in $extentsions; do
@@ -120,17 +122,18 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
     if [[ $HANDLEBARS == true ]]; then
       ./bin/generate $ENVIRONMENT_NAME
     fi
-done
-echo " entering into github workspace"
-pushd $GITHUB_WORKSPACE
-ENV_ARR=($ENV_LIST)
-# ARR_LEN=`echo ${ENV_ARR[@]}`
-# while [ $ARR_LEN -gt 0 ]
-  for ENVIRONMENT_NAME in ${ENV_ARR[@]}; do
-    echo "starting checks for environment $ENVIRONMENT_NAME"
     checkenv &
-    sleep 10s
-  done
+done
+# echo " entering into github workspace"
+# pushd $GITHUB_WORKSPACE
+# ENV_ARR=($ENV_LIST)
+# # ARR_LEN=`echo ${ENV_ARR[@]}`
+# # while [ $ARR_LEN -gt 0 ]
+#   for ENVIRONMENT_NAME in ${ENV_ARR[@]}; do
+#     echo "starting checks for environment $ENVIRONMENT_NAME"
+#     checkenv &
+#     sleep 10s
+#   done
 
 FAIL=0
 for job in `jobs -p`
