@@ -123,10 +123,14 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
 done
 echo " entering into github workspace"
 pushd $GITHUB_WORKSPACE
-for ENVIRONMENT_NAME in ${ENV_LIST[@]:0:3}; do
-  echo "starting checks for environment $ENVIRONMENT_NAME"
-  checkenv &
-done
+ENV_ARR=($ENV_LIST)
+# ARR_LEN=`echo ${ENV_ARR[@]}`
+# while [ $ARR_LEN -gt 0 ]
+  for ENVIRONMENT_NAME in ${ENV_ARR[@]}; do
+    echo "starting checks for environment $ENVIRONMENT_NAME"
+    checkenv &
+    sleep 5s
+  done
 
 FAIL=0
 for job in `jobs -p`
