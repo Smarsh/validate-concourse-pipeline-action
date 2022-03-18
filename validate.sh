@@ -69,29 +69,28 @@ checkenv(){
 validate_tasks(){
   pushd $GITHUB_WORKSPACE
     # Validates the yaml format
-    pushd result_dir
-    yq v $2
+    yq v result_dir/$2
 
     echo -e "\n${yellow}Validating task file paths...$white\n"
 
-    yq r $2 jobs[*].plan[*].file >> $1_file_paths.yml
+    yq r $2 jobs[*].plan[*].file >> result_dir/$1_file_paths.yml
 
     # get unique task.yml's
-    perl -ne 'print if ! $a{$_}++' $1_file_paths.yml >> $1_unique_file_paths.yml
+    perl -ne 'print if ! $a{$_}++' result_dir/$1_file_paths.yml >> result_dir/$1_unique_file_paths.yml
 
     # Gets the path for every file key in the pipeline yaml
-    yq r --printMode p $2 jobs[*].plan[*].file >> $1_paths.yml
+    yq r --printMode p $2 jobs[*].plan[*].file >> result_dir/$1_paths.yml
 
     # Gets the value for any file key in the pipeline yaml
-    cat $1_paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> $1_jobs.yml
+    cat result_dir/$1_paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> result_dir/$1_jobs.yml
 
     # Gets the job names from all jobs in the jobs.yml
     while IFS= read -r line; do
-      yq r $2 "$line.name" >> $1_names.yml;
-    done < $1_jobs.yml
+      yq r $2 "$line.name" >> result_dir/$1_names.yml;
+    done < result_dir/$1_jobs.yml
 
     # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
-    paste -d ","  $1_names.yml $1_unique_file_paths.yml > $1_test.csv
+    paste -d ","  result_dir/$1_names.yml result_dir/$1_unique_file_paths.yml > result_dir/$1_test.csv
 
 
     # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the
@@ -101,7 +100,7 @@ validate_tasks(){
           echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
           echo "$file" >> baddies.yml
         fi
-    done < $1_test.csv
+    done < result_dir/$1_test.csv
 
     echo -e "\n${yellow}Validating that task scripts are executable...$white\n"
 
@@ -117,7 +116,7 @@ validate_tasks(){
           echo "$task" >> baddies.yml
         fi
       fi
-    done < $1_unique_file_paths.yml
+    done < result_dir/$1_unique_file_paths.yml
 
     # If the baddies.yml exists then it will exit with an error.\
     if [[ -f baddies.yml ]]; then
@@ -138,7 +137,7 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
 done
 
 for filename in result_dir/*.yml; do
-    validate_tasks "$filename"
+    validate_tasks "$ENVIRONMENT_NAME" "$filename"
 done
 
 # echo " entering into github workspace"
