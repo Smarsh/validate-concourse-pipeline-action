@@ -136,10 +136,11 @@ for ENVIRONMENT_NAME in $ENV_LIST; do
       ./bin/generate $ENVIRONMENT_NAME
     fi
     checkenv "$ENVIRONMENT_NAME"
+    pushd $PIPELINE_REPOSITORY
 done
 
 for filename in result_dir/*.yml; do
-    validate_tasks "$ENVIRONMENT_NAME" "$filename"
+    validate_tasks "$ENVIRONMENT_NAME" "$filename" &
 done
 
 # echo " entering into github workspace"
