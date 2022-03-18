@@ -57,6 +57,10 @@ checkenv(){
 
     fly validate-pipeline -o -c "${pipeline_path}/${PIPELINE_CONFIG}" "${vars_file}" >> tmp.yml
 
+    echo " --------------------------------------------------------------------"
+    cat tmp.yml
+    echo " --------------------------------------------------------------------"
+
     # Validates the yaml format
     yq v tmp.yml
 
