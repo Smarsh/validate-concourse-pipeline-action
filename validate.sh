@@ -129,7 +129,7 @@ ENV_ARR=($ENV_LIST)
   for ENVIRONMENT_NAME in ${ENV_ARR[@]}; do
     echo "starting checks for environment $ENVIRONMENT_NAME"
     checkenv &
-    sleep 5s
+    sleep 10s
   done
 
 FAIL=0
