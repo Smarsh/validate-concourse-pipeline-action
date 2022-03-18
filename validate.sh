@@ -144,6 +144,8 @@ pushd $GITHUB_WORKSPACE
 ls -al result_dir
 
 for filename in result_dir/*.yml; do
+     env_file=`echo "${filename##*/}"`
+     ENVIRONMENT_NAME= echo "${env_file%.*}"
     validate_tasks "$ENVIRONMENT_NAME" "$filename" &
 done
 
