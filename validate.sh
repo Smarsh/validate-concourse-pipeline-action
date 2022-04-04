@@ -27,16 +27,16 @@ if [[ $HANDLEBARS == true ]]; then
   pushd $GITHUB_WORKSPACE
 fi
 
-vars_file=''
-if [[ "${VAR_FILES}"  ]]; then
-  files=`echo $VAR_FILES | jq -r .[]`
-  for file in $files; do
-    vars_file="$vars_file -l ${pipeline_path}/$file"
+if [[ "${VAR_EXTS}"  ]]; then
+  extentsions=`echo $VAR_EXTS | jq -r .[]`
+  for extension in $extentsions; do
+    file_path="${pipeline_path}/ci/vars/$ENVIRONMENT_NAME$extension"
+    vars_file="$vars_file -l $file_path"
 
-    cuefile="$pipeline_path$file.cue"
+    cuefile="$file_path.cue"
     if [[ -f "$cuefile" ]]; then
-      echo "cue vet $cuefile $pipeline_path$file"
-      cue vet $cuefile $pipeline_path$file
+      echo "cue vet $cuefile $file_path"
+      cue vet $cuefile $file_path
     else
       echo "cue file not found: $cuefile"
     fi
