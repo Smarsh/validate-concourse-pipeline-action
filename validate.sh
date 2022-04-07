@@ -23,9 +23,12 @@ if [[ $HANDLEBARS == true ]]; then
   if [[ -f bin/action-generate ]]; then
     cp bin/action-generate bin/generate
   fi
+if [[ $PIPELINE_VERSION ]] && [[ $PIPELINE_VERSION == "v2" ]]; then
+  ./bin/generate_ea $ENVIRONMENT_NAME
+else 
   ./bin/generate $ENVIRONMENT_NAME
-  pushd $GITHUB_WORKSPACE
 fi
+pushd $GITHUB_WORKSPACE
 
 vars_file=''
 if [[ "${VAR_FILES}"  ]]; then

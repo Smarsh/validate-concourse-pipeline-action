@@ -22,3 +22,6 @@ inputs:
   PIPELINE_REPOSITORY:
     description: if MULTI_REPO is true, then this is needed to pass in the name of the repository the config can be found in
     required: false
+  PIPELINE_VERSION: 
+    description: optional parameter indicating the version of the pipeline this should run in.  Values -> v1, v2
+    required: false
