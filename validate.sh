@@ -82,7 +82,7 @@ paste -d ","  names.yml unique_file_paths.yml > test.csv
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the
 # file_path, and will put and non existing file in the baddies.yml
 while IFS="," read -r name file; do
-    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != versions-ui_portal_* ]] && [[ ! (${file} =~ ea-hazelcast-deployment-src/*) ]]  && [[ ! (${file} =~ event-logging-git/*) ]]  && [[ ! (${file} =~ insights-jobs-app-git/*) ]]  && [[ ! (${file} =~ git-properties-*/*) ]] && [[ ! (${file} =~ ea-policy-evaluation-service-git/*) ]]  && [[ ! (${file} =~ ea-ediscovery-api-git/*) ]]  && [[ ${file} != versions-*/.ref ]] && [[ ${file} != */version ]] && [[ ${file} != ipList/ipList.txt ]] && [[ ${file} != platform-automation-tasks/tasks/credhub-interpolate.yml ]]; then
+    if [ ! -f "${file}" ] && [[ ${file} != interpolated-versions* ]] && [[ ${file} != versions-ui_portal_* ]] && [[ ! (${file} =~ ea-hazelcast-deployment-src/*) ]]  && [[ ! (${file} =~ event-logging-git/*) ]]  && [[ ! (${file} =~ insights-jobs-app-git/*) ]]  && [[ ! (${file} =~ git-properties-*/*) ]] && [[ ! (${file} =~ ea-policy-evaluation-service-git/*) ]]  && [[ ! (${file} =~ ea-ediscovery-api-git/*) ]]  && [[ ${file} != versions-*/.ref ]] && [[ ${file} != */version ]] && [[ ${file} != ipList/ipList.txt ]] && [[ ! (${file} =~ ea-audio-data-service-ci-source/*) ]] && [[ ${file} != platform-automation-tasks/tasks/credhub-interpolate.yml ]]; then
       echo -e "$red$name$white references a path that doesn't exist:\n ----- ${file} does not exist"
       echo "$file" >> baddies.yml
     fi
