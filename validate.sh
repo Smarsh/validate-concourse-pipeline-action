@@ -71,9 +71,6 @@ yq r --printMode p tmp.yml jobs[*].plan[*].file >> paths.yml
 # Gets the value for any file key in the pipeline yaml
 cat paths.yml | grep -o 'jobs.\(\[\d]\|\[\d\d]\)' >> jobs.yml
 
-echo "######### PRINTING Jobs.yml"
-cat jobs.yml
-
 # Gets the job names from all jobs in the jobs.yml
 while IFS= read -r line; do
   yq r tmp.yml "$line.name" >> names.yml;
