@@ -87,7 +87,7 @@ echo "########################################"
 echo "########################### Unique file paths ##################"
 cat unique_file_paths.yml
 echo "########################################"
-cat unique_file_paths.yml | wc-l
+cat unique_file_paths.yml | wc -l
 echo "########################################"
 
 echo "##### test.csv contents"
