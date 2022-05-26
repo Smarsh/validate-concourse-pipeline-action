@@ -78,23 +78,6 @@ done < jobs.yml
 
 # Combines the names.yml and unique_file_paths.yml into one file with a "," delimiter
 paste -d ","  names.yml unique_file_paths.yml > test.csv
-echo "############################## NAMES ##############"
-cat names.yml
-echo "########################################"
-cat names.yml | wc -l
-echo "########################################"
-
-echo "########################### Unique file paths ##################"
-cat unique_file_paths.yml
-echo "########################################"
-cat unique_file_paths.yml | wc -l
-echo "########################################"
-
-echo "##### test.csv contents"
-cat test.csv
-echo "########################################"
-cat test.csv | wc -l 
-echo "########################################"
 
 # Using the delimiter it checkes if the file does not exist, and if it doesn't exits will then alert that the Job Name does not have the
 # file_path, and will put and non existing file in the baddies.yml
