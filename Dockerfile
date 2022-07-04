@@ -8,7 +8,7 @@ RUN wget https://github.com/concourse/concourse/releases/download/v7.6.0/fly-7.6
     tar xf fly*.tgz -C /usr/bin/ && \
     chmod +x /usr/bin/fly
 
-RUN wget https://github.com/cuelang/cue/releases/download/v0.4.0/cue_v0.4.0_linux_amd64.tar.gz && \
+RUN wget https://github.com/cue-lang/cue/releases/download/v0.4.3/cue_v0.4.3_linux_amd64.tar.gz && \
     tar xf cue*.tar.gz -C /usr/bin/ && \
     chmod +x /usr/bin/cue
 
