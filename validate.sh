@@ -53,6 +53,9 @@ checkmark=$'\xE2\x9C\x94'
 
 echo -e "${yellow}Validating $PIPELINE_CONFIG with fly validate...$white\n"
 
+###DEBUG
+ls -al
+
 fly validate-pipeline -o -c "${pipeline_path}/${PIPELINE_CONFIG}" "${vars_file}" >> tmp.yml
 
 # Validates the yaml format
