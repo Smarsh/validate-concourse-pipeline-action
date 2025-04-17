@@ -1,0 +1,18 @@
+identifier: validate-concourse-pipeline-action
+title: validate-concourse-pipeline-action
+blueprint: service
+team: ["Fabric Release Engineering"]
+properties:                     
+  description: "(auto-generated port.yml, needs correction)"                    
+  customer_facing: false
+  monitor_dashboards: ["devops"]
+  logs: ["https://kibana.us-east-1.aws.smarsh.cloud/app/discover"]
+  vault: ["https://vault.1cp.us-east-1.aws.enklavo.com:8200"]        
+  documentation: ["https://app.datadoghq.com"]
+  repo_type: devops
+  slack: https://slack.com/archives/C06AEFVVB2N
+relations:
+    product: "fabric"
+    code_owners: ["shantaram.gopi@smarsh.com", "nihar.devathi@smarsh.com", "satish.nagaraj@smarsh.com", "sanjay.shetty@smarsh.com", "manohara.srinivasa@smarsh.com"]
+
+
